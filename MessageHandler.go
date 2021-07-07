@@ -12,7 +12,7 @@ type MessageHandler struct{
 
 func NewMessageHandler() MessageHandler{
 	return MessageHandler{
-		commands: []Command{
+		Commands: []Command{
 			Help{},
 		},
 	}
