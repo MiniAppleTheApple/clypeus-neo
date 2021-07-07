@@ -12,7 +12,7 @@ import (
 
 type Data struct {
 	Token string `json:"token"`
-	DataType string`json:"data_type"`
+	DataManagerType string`json:"datamanger"`
 }
 
 func (self *Data) createBot() *discord.Session{
@@ -27,7 +27,10 @@ func (self *Data) createBot() *discord.Session{
 
 func main() {
 	file,err := io.ReadFile("settings.json")
-	handle(err)
+	if err != nil {
+		handle(err)
+		file,err = io.ReadFile("settings.example.json")
+	}
 
 	data := Data{}
 

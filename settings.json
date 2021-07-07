@@ -1,4 +1,0 @@
-{
-	"token": "my token2",
-	"data_type": "way that you want to storage your data (local(sqlite3) or online(mongodb)"
-}
