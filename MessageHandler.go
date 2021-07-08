@@ -1,34 +1,29 @@
 package main
 
 import (
-	"fmt"
+	// "fmt"
+	"example.com/main/command"
 	"strings"
 	discord "github.com/bwmarrin/discordgo"
 )
 
 type MessageHandler struct{
-	Commands []Command
+	Command_Handler CommandHandler
 }
 
-func NewMessageHandler() MessageHandler{
+func NewMessageHandler(bot Bot,commands []command.Command) MessageHandler{
 	return MessageHandler{
-		Commands: []Command{
-			Help{},
+		CommandHandler{
+			commands,
+			bot,
 		},
 	}
 }
 
-func (self *MessageHandler) handle(prefix string,bot *discord.Session,msg *discord.MessageCreate){
+func (self *MessageHandler) Handle(msg *discord.MessageCreate){
 	splited := strings.Split(msg.Content," ")
 	command_name := splited[0]
-
-	for i := 0;i < len(self.Commands);i++{
-		v := self.Commands[i]
-		if name := v.GetCommandName();command_name == prefix + name {
-			v.Handle(bot,msg)
-			fmt.Println(prefix + name)
-		}
-	}
+	self.Command_Handler.Handle(command_name,msg)
 }
 
 

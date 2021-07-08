@@ -1,13 +1,14 @@
-package main
+package command
 import (
 	// "time"
 	// "fmt"
+	"example.com/main/command/tool"
 	discord "github.com/bwmarrin/discordgo"
 )
 type Help struct {}
 
-func (self Help) Handle(bot *discord.Session,msg *discord.MessageCreate){
-	embed := NewEmbed().SetTitle("指令列表:").SetDescription(
+func (self Help) Handle(bot *discord.Session,msg *discord.MessageCreate) error{
+	embed := tool.NewEmbed().SetTitle("指令列表:").SetDescription(
 		"[>>點此加入官方支援區](https://discord.gg/6G3Gjr8yFF)" + "\n" + "[>>點此邀請機器人!](https://discord.com/api/oauth2/authorize?client_id=784044530931466250&permissions=8&scope=bot)",
 	).SetAuthor(
 		"嗨~ 我是 PRØ-TECTER",
@@ -33,7 +34,10 @@ func (self Help) Handle(bot *discord.Session,msg *discord.MessageCreate){
 	).SetFooter("目前版本 : PRØ-TECTER NEO v1")
 	final_embed := embed.MessageEmbed
 	_,err := bot.ChannelMessageSendEmbed(msg.ChannelID, final_embed)
-	handle(err)
+	if err != nil{
+		return err
+	}
+	return nil
 }
 
 func (self Help) GetCommandName() string{

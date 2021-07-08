@@ -7,6 +7,8 @@ import (
 	"os/signal"
 	"encoding/json"
 	io "io/ioutil"
+	. "example.com/main/command"
+	// "example.com/main/command/data"
 	discord "github.com/bwmarrin/discordgo"
 )
 
@@ -15,21 +17,38 @@ type Data struct {
 	DataManagerType string`json:"datamanger"`
 }
 
-func (self *Data) createBot() *discord.Session{
-	bot, err := discord.New("Bot " + self.Token)
-
+func (self *Data) createBot(prefix string) Bot{
+	_bot, err := discord.New("Bot " + self.Token)
+	
 	if err != nil {
 		fmt.Println(err)
-		return bot
 	}
+	bot := Bot{_bot,prefix}
+	handler := NewMessageHandler(bot,[]Command{Help{}})
+	bot.Bot.AddHandler(func (s *discord.Session, m *discord.MessageCreate) {
+		handler.Handle(m)
+	})
+	bot.Bot.Identify.Intents = discord.IntentsAll
 	return bot
 }
 
+type Bot struct {
+	Bot *discord.Session
+	Prefix string
+}
+func handle(err error) {
+	if err != nil {
+		fmt.Println(err)
+	}
+}
 func main() {
 	file,err := io.ReadFile("settings.json")
 	if err != nil {
 		handle(err)
 		file,err = io.ReadFile("settings.example.json")
+		if err != nil {
+			fmt.Println("pls check if there is settings.example.json or settings.json in your disk")
+		}
 	}
 
 	data := Data{}
@@ -37,16 +56,9 @@ func main() {
 	err = json.Unmarshal(file,&data)
 	handle(err)
 
-	bot := data.createBot()
-
-	bot.AddHandler(func (s *discord.Session, m *discord.MessageCreate) {
-		handler := NewMessageHandler()
-		handler.handle("!",s,m)
-	})
-
+	myBot := data.createBot("!")
+	bot := myBot.Bot
 	fmt.Println("Bot is running!")
-
-	bot.Identify.Intents = discord.IntentsAll
 
 	err = bot.Open()
 	handle(err)

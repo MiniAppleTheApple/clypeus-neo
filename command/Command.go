@@ -1,8 +1,8 @@
-package main
+package command
 import (
 	discord "github.com/bwmarrin/discordgo"
 )
 type Command interface {
 	GetCommandName() string
-	Handle(*discord.Session,*discord.MessageCreate)
+	Handle(*discord.Session,*discord.MessageCreate) error
 }
