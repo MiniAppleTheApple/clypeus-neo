@@ -8,22 +8,43 @@ import (
 )
 
 type MessageHandler struct{
-	Command_Handler CommandHandler
+	data Data
+	bot *discord.Session
+	command CommandHandler
+	danger DangerHandler
 }
 
-func NewMessageHandler(bot Bot,commands []command.Command) MessageHandler{
+func NewMessageHandler(data Data,bot *discord.Session,commands []command.Command) MessageHandler{
 	return MessageHandler{
+		data,
+		bot,
 		CommandHandler{
 			commands,
 			bot,
+			data,
+		},
+		DangerHandler{
+			bot,
+			make(map[string]*User),
 		},
 	}
 }
 
 func (self *MessageHandler) Handle(msg *discord.MessageCreate){
-	splited := strings.Split(msg.Content," ")
-	command_name := splited[0]
-	self.Command_Handler.Handle(command_name,msg)
+	if msg.Author.ID == self.bot.State.User.ID {
+		return
+	}
+
+	self.danger.Handle(msg)
+
+	content := msg.Content
+
+	if len(self.data.Prefix) < len(content){
+		splited := strings.Split(content[len(self.data.Prefix):]," ")
+		self.command.Handle(splited,msg)
+		return
+	}
+	return
 }
 
 

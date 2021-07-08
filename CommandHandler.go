@@ -6,17 +6,21 @@ import (
 )
 type CommandHandler struct {
 	commands []command.Command
-	bot Bot
+	bot *discord.Session
+	data Data
 }
-func NewCommandHandler() CommandHandler {
-	return CommandHandler {}
-}
-func (self CommandHandler) Handle(command_name string,msg *discord.MessageCreate){
+func (self CommandHandler) Handle(args []string,msg *discord.MessageCreate){
+	command_name := args[0]
+	fmt.Println(command_name)
 	for i := 0;i < len(self.commands);i++{
 		v := self.commands[i]
-		if name := v.GetCommandName();command_name == self.bot.Prefix + name {
-			v.Handle(self.bot.Bot,msg)
-			fmt.Println(self.bot.Prefix + name)
+		if name := v.GetCommandName();command_name == name {
+			err := v.ToArguments(args)
+			err = v.Handle(self.bot,msg)
+			if err != nil {
+				fmt.Println(err)
+			}
+			fmt.Println(self.data.Prefix + name)
 		}
 	}
 }

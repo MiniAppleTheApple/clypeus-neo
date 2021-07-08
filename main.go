@@ -15,27 +15,23 @@ import (
 type Data struct {
 	Token string `json:"token"`
 	DataManagerType string`json:"datamanger"`
+	Prefix string `json:"prefix"`
 }
 
-func (self *Data) createBot(prefix string) Bot{
-	_bot, err := discord.New("Bot " + self.Token)
+func (self *Data) createBot() *discord.Session{
+	bot, err := discord.New("Bot " + self.Token)
 	
 	if err != nil {
 		fmt.Println(err)
 	}
-	bot := Bot{_bot,prefix}
-	handler := NewMessageHandler(bot,[]Command{Help{}})
-	bot.Bot.AddHandler(func (s *discord.Session, m *discord.MessageCreate) {
+	handler := NewMessageHandler(*self,bot,[]Command{AddHelp(),AddPurge(),AddBulk()})
+	bot.AddHandler(func (s *discord.Session, m *discord.MessageCreate) {
 		handler.Handle(m)
 	})
-	bot.Bot.Identify.Intents = discord.IntentsAll
+	bot.Identify.Intents = discord.IntentsAll
 	return bot
 }
 
-type Bot struct {
-	Bot *discord.Session
-	Prefix string
-}
 func handle(err error) {
 	if err != nil {
 		fmt.Println(err)
@@ -56,8 +52,7 @@ func main() {
 	err = json.Unmarshal(file,&data)
 	handle(err)
 
-	myBot := data.createBot("!")
-	bot := myBot.Bot
+	bot := data.createBot()
 	fmt.Println("Bot is running!")
 
 	err = bot.Open()
