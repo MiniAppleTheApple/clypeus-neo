@@ -2,49 +2,36 @@ package main
 
 import (
 	// "fmt"
-	"example.com/main/command"
 	"strings"
+
+	"example.com/main/command"
 	discord "github.com/bwmarrin/discordgo"
 )
 
-type MessageHandler struct{
-	data Data
-	bot *discord.Session
-	command CommandHandler
-	danger DangerHandler
+type MessageHandler struct {
+	commander *Commander
+	antispam  *AntiSpam
 }
 
-func NewMessageHandler(data Data,bot *discord.Session,commands []command.Command) MessageHandler{
+func NewMessageHandler(commands []command.Command) MessageHandler {
 	return MessageHandler{
-		data,
-		bot,
-		CommandHandler{
-			commands,
-			bot,
-			data,
-		},
-		DangerHandler{
-			bot,
-			make(map[string]*User),
-		},
+		NewCommander(commands),
+		NewAntiSpam(),
 	}
 }
 
-func (self *MessageHandler) Handle(msg *discord.MessageCreate){
-	if msg.Author.ID == self.bot.State.User.ID {
+func (handler *MessageHandler) Handle(msg *discord.MessageCreate) {
+	if msg.Author.ID == GetBot().State.User.ID {
 		return
 	}
 
-	self.danger.Handle(msg)
+	handler.antispam.Handle(msg)
 
-	content := msg.Content
+	var content string = msg.Content
 
-	if len(self.data.Prefix) < len(content){
-		splited := strings.Split(content[len(self.data.Prefix):]," ")
-		self.command.Handle(splited,msg)
+	if len(GetSettings().Prefix) < len(content) {
+		splited := strings.Split(content[len(GetSettings().Prefix):], " ")
+		handler.commander.Handle(splited, msg)
 		return
 	}
-	return
 }
-
-
