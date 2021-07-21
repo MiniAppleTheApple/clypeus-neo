@@ -13,7 +13,7 @@ type MessageHandler struct {
 	antispam  *AntiSpam
 }
 
-func NewMessageHandler(commands []command.Command) MessageHandler {
+func NewMessageHandler(commands map[string]command.Command) MessageHandler {
 	return MessageHandler{
 		NewCommander(commands),
 		NewAntiSpam(),

@@ -28,18 +28,13 @@ func (purge Purge) Handle(bot *discord.Session, msg *discord.MessageCreate) erro
 	}
 	return err
 }
-
-func (self Purge) GetCommandName() string {
-	return "purge"
-}
-
-func (self *Purge) ToArguments(args []string) error {
+func (purge *Purge) ToArguments(args []string) error {
 	var err error
 	if len(args) > 1 {
-		self.times, err = strconv.Atoi(args[1])
-		fmt.Println(self.times)
+		purge.times, err = strconv.Atoi(args[1])
+		fmt.Println(purge.times)
 		return err
 	}
-	self.times = 100
+	purge.times = 100
 	return err
 }

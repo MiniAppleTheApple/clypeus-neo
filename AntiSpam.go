@@ -13,9 +13,11 @@ type AntiSpam struct{}
 const (
 	// time that handler reset the count of message
 	timeToReset = time.Millisecond * 3000
-	// the max message that the user can send at {TimeToRest},
-	// if the user send more than the max message,
-	// then the user get warned and can't send message
+	/*
+		the max message that the user can send at {TimeToRest},
+		if the user send more than the max message,
+		then the user get warned and can't send message
+	*/
 	maxMessageCount = 5
 )
 
@@ -25,7 +27,7 @@ func NewAntiSpam() *AntiSpam {
 }
 
 // handling problem
-func (_antispam AntiSpam) Handle(msg *discord.MessageCreate) {
+func (_ AntiSpam) Handle(msg *discord.MessageCreate) {
 	var (
 		warningHandler *UserMap         = GetUserMap()
 		bot            *discord.Session = GetBot()

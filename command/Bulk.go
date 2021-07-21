@@ -31,16 +31,13 @@ func (bulk Bulk) Handle(bot *discord.Session, msg *discord.MessageCreate) error 
 	return err
 }
 
-func (self Bulk) GetCommandName() string {
-	return "bulk"
-}
-func (self *Bulk) ToArguments(args []string) error {
+func (bulk *Bulk) ToArguments(args []string) error {
 	var err error
 	if len(args) > 1 {
-		self.times, err = strconv.Atoi(args[1])
-		fmt.Println(self.times)
+		bulk.times, err = strconv.Atoi(args[1])
+		fmt.Println(bulk.times)
 		return err
 	}
-	self.times = 100
+	bulk.times = 100
 	return err
 }

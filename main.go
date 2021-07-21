@@ -41,7 +41,11 @@ func main() {
 		fmt.Println(err)
 	}
 	func() {
-		handler := NewMessageHandler([]command.Command{command.AddHelp(), command.AddPurge(), command.AddBulk()})
+		handler := NewMessageHandler(map[string]command.Command{
+			"help":  command.AddHelp(),
+			"purge": command.AddPurge(),
+			"bulk":  command.AddBulk(),
+		})
 		bot.AddHandler(func(s *discord.Session, m *discord.MessageCreate) {
 			handler.Handle(m)
 		})

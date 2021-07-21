@@ -10,11 +10,11 @@ import (
 
 type Help struct{}
 
-func AddHelp() Command {
-	return Help{}
+func AddHelp() *Help {
+	return &Help{}
 }
 
-func (self Help) Handle(bot *discord.Session, msg *discord.MessageCreate) error {
+func (help Help) Handle(bot *discord.Session, msg *discord.MessageCreate) error {
 	var embed *discord.MessageEmbed = tool.NewEmbed().SetTitle(
 		"指令列表:",
 	).SetDescription(
@@ -53,10 +53,6 @@ func (self Help) Handle(bot *discord.Session, msg *discord.MessageCreate) error 
 	return nil
 }
 
-func (self Help) GetCommandName() string {
-	return "help"
-}
-
-func (self Help) ToArguments(args []string) error {
+func (_ Help) ToArguments(args []string) error {
 	return nil
 }
